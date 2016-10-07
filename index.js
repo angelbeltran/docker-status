@@ -22,7 +22,7 @@ let _ = require('lodash')
 }
 */
 
-// returns a cron job to be started by: require('this project').start()
+// returns a cron job to be started by: require('docker-status')(options).start()
 module.exports = function (options) {
   let docker = new Docker(options)
   let prevContainers = []
