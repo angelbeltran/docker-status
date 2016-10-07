@@ -1,0 +1,19 @@
+{
+  "name": "docker-status",
+  "version": "0.1.0",
+  "description": "A tool that generates cron jobs for logging updates to containers running in a docker instance.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": {
+    "name": "Angel Beltran",
+    "email": "beltranbeaverdam@gmail.com"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "cron": "^1.1.0",
+    "dockerode": "^2.3.1",
+    "lodash": "^4.16.4"
+  }
+}
