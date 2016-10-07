@@ -6,6 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "bin": {
+    "docker-status": "./bin/index.js"
+  },
   "author": {
     "name": "Angel Beltran",
     "email": "beltranbeaverdam@gmail.com"
@@ -15,5 +18,8 @@
     "cron": "^1.1.0",
     "dockerode": "^2.3.1",
     "lodash": "^4.16.4"
-  }
+  },
+  "files": [
+    "index.js"
+  ]
 }

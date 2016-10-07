@@ -57,8 +57,6 @@ module.exports = function (options) {
 
         if (containerUpdates) {
           updates.push(containerUpdates)
-        } else {
-          console.log('No Updates for container:', container.Id)
         }
       })
 
@@ -81,7 +79,7 @@ module.exports = function (options) {
         }
       }
 
-      updates = updates.concat(newContainers.map((c) => ({ added: c }))
+      updates = updates.concat(newContainers.map((c) => ({ added: c })))
 
       // log the updates
       logUpdates (updates)
@@ -207,9 +205,9 @@ module.exports = function (options) {
   }
 
   function logUpdates (updates) {
-    let diffUpdates = bundleUpdates('diffs')
-    let removalUpdates = bundleUpdates('removed')
-    let addUpdates = bundleUpdates('added')
+    let diffUpdates = bundleUpdates(updates, 'diffs')
+    let removalUpdates = bundleUpdates(updates, 'removed')
+    let addUpdates = bundleUpdates(updates, 'added')
 
     diffUpdates.forEach((update) => {
       console.log('Container %s updates', update.Id)
@@ -221,9 +219,9 @@ module.exports = function (options) {
       })
     })
 
-    if (removedUpdates.length) {
+    if (removalUpdates.length) {
       console.log('Containers removed')
-      removedUpdates.forEach((update) => {
+      removalUpdates.forEach((update) => {
         console.log(' ', update)
       })
     }
