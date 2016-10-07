@@ -23,8 +23,8 @@ let _ = require('lodash')
 */
 
 // returns a cron job to be started by: require('this project').start()
-module.exports = function (host) {
-  let docker = new Docker({ host: '10.129.26.45', port: 4000 })
+module.exports = function (options) {
+  let docker = new Docker(options)
   let prevContainers = []
   let job = new CronJob('*/1 * * * * *', function () {
     docker.listContainers(function (err, currContainers) {
