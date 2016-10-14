@@ -15,6 +15,7 @@
   },
   "license": "MIT",
   "dependencies": {
+    "colors": "^1.1.2",
     "cron": "^1.1.0",
     "dockerode": "^2.3.1",
     "lodash": "^4.16.4"
