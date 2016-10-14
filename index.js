@@ -29,8 +29,9 @@ let path = require('path')
 
 // returns a cron job to be started by: require('docker-status')(options).start()
 module.exports = function (options) {
-  options = options || {}
-  let cron = options.cron || '*/1 * * * * *'
+  options = _.merge({}, options || {}) // don't mutate the original options object
+  let cronOptions = options.cron || { cronTime: '*/1 * * * * *' }
+  let onTick = cronOptions.onTick || noop
   let logFile = options.log || ''
   let docker = new Docker(options.docker)
   let prevContainers = []
@@ -101,12 +102,14 @@ module.exports = function (options) {
 
     // mark the current containers as previous containers for the next iteration
     prevContainers = currContainers.slice(0)
+
+    // call any onTick cron job function provided now that the container logging is complete
+    onTick(prevContainers, updates)
   }
 
   // cron job that handles updates in the docker container space
-  return new CronJob(cron, function () {
-    docker.listContainers(handleContainerUpdates)
-  })
+  cronOptions.onTick = docker.listContainers.bind(docker, handleContainerUpdates)
+  return new CronJob(cronOptions)
 }
 
 // returns { ... }
@@ -300,3 +303,5 @@ function prepareColoredLogString (a) {
     .replace(/( )Names(: )/, '$1' + colors.cyan('Names') + ': ')
     .replace(/( )Image(: )/, '$1' + colors.cyan('Image') + ': ')
 }
+
+function noop () {}
