@@ -30,9 +30,10 @@ let path = require('path')
 // returns a cron job to be started by: require('docker-status')(options).start()
 module.exports = function (options) {
   options = _.merge({}, options || {}) // don't mutate the original options object
+  options.cron = options.cron || { cronTime: '*/1 * * * * *' }
+  options.log = options.log || {}
   let cronOptions = options.cron || { cronTime: '*/1 * * * * *' }
   let onTick = cronOptions.onTick || noop
-  let logFile = options.log || ''
   let docker = new Docker(options.docker)
   let prevContainers = []
 
@@ -98,7 +99,8 @@ module.exports = function (options) {
     updates = updates.concat(newContainers.map((c) => ({ added: c })))
 
     // log the updates
-    logUpdates(updates, { file: logFile })
+    // logUpdates(updates, logFile ? { file: logFile, colored: coloredFileLogs } : {})
+    logUpdates(updates, options.log || {})
 
     // mark the current containers as previous containers for the next iteration
     prevContainers = currContainers.slice(0)
@@ -228,6 +230,9 @@ function updateDifference (a, b) {
 }
 
 function logUpdates (updates, options) {
+  options = options || {}
+  let filename = options.file || ''
+  let coloredFileOutput = options.colored || false
   let time = (new Date()).toString()
   let diffUpdates = bundleUpdates(updates, 'diffs')
   let removalUpdates = bundleUpdates(updates, 'removed')
@@ -258,7 +263,7 @@ function logUpdates (updates, options) {
     updateString += '\n' + printf('removals:')
     removalUpdates.forEach((update) => {
       console.log(prepareColoredLogString(update))
-      updateString += '\n' + prepareLogString(update)
+      updateString += '\n' + (coloredFileOutput ? prepareColoredLogString(update) : prepareLogString(update))
     })
   }
 
@@ -267,13 +272,13 @@ function logUpdates (updates, options) {
     updateString += '\n' + printf('additions:')
     addUpdates.forEach((update) => {
       console.log(prepareColoredLogString(update))
-      updateString += '\n' + prepareLogString(update)
+      updateString += '\n' + (coloredFileOutput ? prepareColoredLogString(update) : prepareLogString(update))
     })
   }
 
   if (updateString) {
-    if (options.file) {
-      fs.appendFileSync(path.resolve(options.file), updateString, 'utf-8')
+    if (filename) {
+      fs.appendFileSync(path.resolve(filename), updateString, 'utf-8')
     }
   }
 }
