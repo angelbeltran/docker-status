@@ -246,7 +246,8 @@ function logUpdates (updates, options) {
 
   if (diffUpdates.length) {
     diffUpdates.forEach((update) => {
-      console.log('diffs to %s', update.Id)
+      //console.log('diffs to %s', update.Id)
+      console.log('diffs to ' + colors.green(update.Id))
       updateString += '\n' + printf('diffs to %s', update.Id)
       Object.keys(update).forEach((key) => {
         if (key === 'Id') {
