@@ -1,6 +1,6 @@
 {
   "name": "docker-status",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "A tool that generates cron jobs for logging updates to containers running in a docker instance.",
   "main": "index.js",
   "scripts": {
@@ -19,5 +19,12 @@
   },
   "files": [
     "index.js"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/angelbeltran/docker-status.git"
+  },
+  "keywords": [
+    "docker", "cron", "node", "container", "containers", "status", "log", "logs"
   ]
 }
