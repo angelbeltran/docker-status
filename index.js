@@ -110,7 +110,7 @@ module.exports = function (options) {
   }
 
   // cron job that handles updates in the docker container space
-  cronOptions.onTick = docker.listContainers.bind(docker, handleContainerUpdates)
+  cronOptions.onTick = docker.listContainers.bind(docker, { all: true }, handleContainerUpdates)
   return new CronJob(cronOptions)
 }
 
@@ -207,7 +207,7 @@ function compareStates (a, b) {
   return a === b ? undefined : { prev: a, curr: b }
 }
 
-function compareStatus (a, b) {
+function compareStatuses (a, b) {
   return { prev: a, curr: b }
 }
 
@@ -252,7 +252,7 @@ function logUpdates (updates, options) {
         if (key === 'Id') {
           return
         }
-        console.log('  %s %s -> %s', key, update[key].prev, update[key].curr)
+        console.log('  %s: %s -> %s', key, update[key].prev, update[key].curr)
         updateString += '\n' + printf('  %s %s -> %s', key, update[key].prev, update[key].curr)
       })
     })
