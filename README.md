@@ -184,4 +184,8 @@ removals:
              GlobalIPv6PrefixLen: 0,
              MacAddress: '02:42:ac:11:00:03' } } },
     Mounts: [] }
+-- updates: Fri Oct 14 2016 18:24:27 GMT-0600 (MDT) --
+diffs to 8145e9a12cfcca3afcd00bd05587635f3668c553f73d9f1b59e120d09d11497e
+  State: running -> exited
+  Status: Up Less than a second -> Exited (0) 1 seconds ago
 ```
