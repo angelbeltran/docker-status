@@ -30,12 +30,14 @@ let path = require('path')
 // returns a cron job to be started by: require('docker-status')(options).start()
 module.exports = function (options) {
   options = _.merge({}, options || {}) // don't mutate the original options object
-  options.cron = options.cron || { cronTime: '*/1 * * * * *' }
+  options.cron = options.cron || {}
+  options.cron.cronTime = options.cron.cronTime || '*/1 * * * * *'
   options.log = options.log || {}
   let cronOptions = options.cron || { cronTime: '*/1 * * * * *' }
   let onTick = cronOptions.onTick || noop
   let docker = new Docker(options.docker)
   let prevContainers = []
+  let firstCheck = true
 
   function handleContainerUpdates (err, currContainers) {
     if (err) {
@@ -43,6 +45,11 @@ module.exports = function (options) {
     }
     if (!currContainers) {  // TODO: removed this if we find that currContainers is only null when there is an error
       currContainers = []
+    }
+    if (!options.existing && firstCheck) {
+      firstCheck = false
+      prevContainers = currContainers.slice(0)
+      return
     }
 
     let updates = []
@@ -246,7 +253,6 @@ function logUpdates (updates, options) {
 
   if (diffUpdates.length) {
     diffUpdates.forEach((update) => {
-      //console.log('diffs to %s', update.Id)
       console.log('diffs to ' + colors.green(update.Id))
       updateString += '\n' + printf('diffs to %s', update.Id)
       Object.keys(update).forEach((key) => {
