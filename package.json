@@ -1,6 +1,6 @@
 {
   "name": "docker-status",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "A tool that generates cron jobs for logging updates to containers running in a docker instance.",
   "main": "index.js",
   "scripts": {
@@ -22,7 +22,8 @@
     "yargs": "^6.1.1"
   },
   "files": [
-    "index.js"
+    "index.js",
+    "bin"
   ],
   "repository": {
     "type": "git",
