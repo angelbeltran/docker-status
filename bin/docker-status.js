@@ -7,7 +7,7 @@ let yargs         = require('yargs')
 let dockerStatus  = require('..')
 
 
-// TODO: define the options and their aliases (only obvious ones)
+// TODO: define the options' aliases (only obvious ones)
 let argv = yargs
   .usage('Usage: docker-status [options]')
   .help('h')
@@ -29,21 +29,18 @@ let dockerOptions = {}
 let cronOptions = {}
 let logOptions = {}
 
-delete argv.$0
-delete argv._
+// insist only providing colored option with a file name
+if (argv.colored && !argv.file) {
+  throw new Error('Color specified, but no file name.')
+}
 
-// resolve any file paths (ca, cert, key)
+// resolve file paths (ca, cert, key)
 'ca cert key'.split(' ').forEach((opt) => {
   if (argv[opt] !== undefined) {
     console.log('opt:', opt, argv[opt])
     argv[opt] = fs.readFileSync(path.resolve(argv[opt])).toString()
   }
 })
-
-
-if (argv.colored && !argv.file) {
-  throw new Error('Color specified, but no file name.')
-}
 
 // get logging options
 'file colored'.split(' ').forEach((opt) => {
@@ -60,7 +57,7 @@ if (argv.colored && !argv.file) {
   }
 })
 
-// give remaining options to dockerode instance
+// get docker options
 'protocol host port ca cert key'.split(' ').forEach((option) => {
   if (argv[option] !== undefined) {
     dockerOptions[option] = argv[option]
