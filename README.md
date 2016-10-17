@@ -5,7 +5,7 @@ A tool for logging docker container information.
 ## Install
 
 ```
-npm install docker-status
+npm install -g docker-status
 ```
 
 ## Package
