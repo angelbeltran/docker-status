@@ -32,7 +32,6 @@ module.exports = function (options) {
   options = _.merge({}, options || {}) // don't mutate the original options object
   options.cron = options.cron || {}
   options.cron.cronTime = options.cron.cronTime || '*/1 * * * * *'
-  options.log = options.log || {}
   let cronOptions = options.cron || { cronTime: '*/1 * * * * *' }
   let onTick = cronOptions.onTick || noop
   let docker = new Docker(options.docker)
@@ -106,8 +105,7 @@ module.exports = function (options) {
     updates = updates.concat(newContainers.map((c) => ({ added: c })))
 
     // log the updates
-    // logUpdates(updates, logFile ? { file: logFile, colored: coloredFileLogs } : {})
-    logUpdates(updates, options.log || {})
+    logUpdates(updates, options)
 
     // mark the current containers as previous containers for the next iteration
     prevContainers = currContainers.slice(0)

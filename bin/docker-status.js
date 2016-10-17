@@ -27,7 +27,6 @@ let argv = yargs
 let options = {}
 let dockerOptions = {}
 let cronOptions = {}
-let logOptions = {}
 
 // insist only providing colored option with a file name
 if (argv.colored && !argv.file) {
@@ -42,11 +41,10 @@ if (argv.colored && !argv.file) {
   }
 })
 
-// get logging options
-'file colored'.split(' ').forEach((opt) => {
-  if (argv[opt] !== undefined) {
-    logOptions[opt] = argv[opt]
-    delete argv[opt]
+// get docker options
+'protocol host port ca cert key'.split(' ').forEach((option) => {
+  if (argv[option] !== undefined) {
+    dockerOptions[option] = argv[option]
   }
 })
 
@@ -57,10 +55,10 @@ if (argv.colored && !argv.file) {
   }
 })
 
-// get docker options
-'protocol host port ca cert key'.split(' ').forEach((option) => {
-  if (argv[option] !== undefined) {
-    dockerOptions[option] = argv[option]
+// get logging options
+'file colored existing'.split(' ').forEach((opt) => {
+  if (argv[opt] !== undefined) {
+    options[opt] = argv[opt]
   }
 })
 
@@ -70,9 +68,6 @@ if (Object.keys(dockerOptions).length) {
 }
 if (Object.keys(cronOptions).length) {
   options.cron = cronOptions
-}
-if (Object.keys(logOptions).length) {
-  options.log = logOptions
 }
 
 let job = dockerStatus(options)
