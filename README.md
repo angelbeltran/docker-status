@@ -95,13 +95,14 @@ let dockerStatus = require('docker-status')
 let job = dockerStatus({
   docker: { host: <host>, port: <port> },
   cron: { cronTime: '*/10 * 8-20 * * 1-5', onTick: function (containers, updates) { ... } },
-  log: { file: 'docker-status.log', colored: true }
+  file: 'docker-status.log',
+  colored: true
  })
 
 job.start()
 ```
 
-The above instance will log changes to the docker container space specified at \<host>:\<port> on weekdays from 8am to 8pm at 10 second intervals. The function specified at ```cron.onTick``` in the options object will be called with the list of current ```container``` data and list of ```updates```. The file, 'docker-status.log', will be appended with all logs, colored per ANSI escape codes.
+The above instance will log changes to the containers specified at \<host>:\<port> on weekdays from 8am to 8pm at 10 second intervals. The function specified at ```cron.onTick``` in the options object will be called with the list of current ```container``` data and list of ```updates```. The file, 'docker-status.log', will be appended with all logs, colored per ANSI escape codes. The initial state of the containers will not be logged, because ```existing``` was not set to ```true```. When a container's state changes, updates to that container will be logged.
 
 Here's a simple example of this package at work from the command line (without color, sadly).
 
