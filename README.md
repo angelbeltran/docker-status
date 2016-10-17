@@ -8,30 +8,25 @@ A tool for logging docker container information.
 npm install -g docker-status
 ```
 
-## Package
+## Usage
 
 This npm package exports a function and provides a cli tool that both produce a configurable [cron job](https://github.com/ncb000gt/node-cron).
 This cron job checks for updates in a docker instance's running containers.
 When changes occur in the state of the containers, those changes are logged nicely.
+Using the tools provided by this package is simple.
 
 ```javascript
-// Simple js example: connect to local docker instance
+// Simple js use case: connect to the local docker instance and log changes to the state of the containers
 let dockerStatus = require('docker-status')
 let job = dockerStatus()
 
-job.start()
-
-// ...
-
-// Defined docker address
+// Same as above except with a defined address
 let dockerStatus = require('docker-status')
 let job = dockerStatus({ docker: { host: <host>, port: <port> } })
 
+// how to start and end the job
 job.start()
-
-// ...
-
-job.stop() // end the job
+job.stop()
 ```
 
 ```bash
@@ -57,7 +52,7 @@ Below is the form config objects passed to the module should take
 }
 ```
 
-All options are optional. For more information on the [dockerode](https://github.com/apocas/dockerode) or [cron](https://github.com/ncb000gt/node-cron) options please visit the respective [dockerode](https://github.com/apocas/dockerode) or [cron](https://github.com/ncb000gt/node-cron) repositories'.
+All values are optional. For more information on the [dockerode](https://github.com/apocas/dockerode) or [cron](https://github.com/ncb000gt/node-cron) options please visit the respective [dockerode](https://github.com/apocas/dockerode) or [cron](https://github.com/ncb000gt/node-cron) repositories'.
 
 - To also store output in a file, set ```file``` to the path of that file, absolute or relative. Note this will append to, not overwrite, said file, creating it if needed.
 
@@ -65,7 +60,7 @@ All options are optional. For more information on the [dockerode](https://github
 
 - To log existing containers upon startup, set ```existing``` to true.
 
-Here is a view of the cli tool options with description:
+Here is a view of the cli tool options with descriptions:
 
 ```bash
 Usage: docker-status [options]
@@ -102,7 +97,7 @@ let job = dockerStatus({
 job.start()
 ```
 
-The above instance will log changes to the containers specified at \<host>:\<port> on weekdays from 8am to 8pm at 10 second intervals. The function specified at ```cron.onTick``` in the options object will be called with the list of current ```container``` data and list of ```updates```. The file, 'docker-status.log', will be appended with all logs, colored per ANSI escape codes. The initial state of the containers will not be logged, because ```existing``` was not set to ```true```. When a container's state changes, updates to that container will be logged.
+The above instance will log changes to the containers specified at ```<host>:<port>``` on weekdays from 8am to 8pm at 10 second intervals. The function specified at ```cron.onTick``` in the options object will be called with the list of current ```container``` data and list of ```updates```. The file, 'docker-status.log', will be appended with all logs, colored per ANSI escape codes. The initial state of the containers will not be logged, because ```existing``` was not set to ```true```. When a container's state changes, updates to that container will be logged.
 
 Here's a simple example of this package at work from the command line (without color, sadly).
 
