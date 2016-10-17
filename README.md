@@ -10,12 +10,12 @@ npm install docker-status
 
 ## Package
 
-This package exports a function the produces a configurable [cron job](https://github.com/ncb000gt/node-cron).
+This npm package exports a function and provides a cli tool that both produce a configurable [cron job](https://github.com/ncb000gt/node-cron).
 This cron job checks for updates in a docker instance's running containers.
 When changes occur in the state of the containers, those changes are logged nicely.
 
 ```javascript
-// Simple example: connect to local docker instance
+// Simple js example: connect to local docker instance
 let dockerStatus = require('docker-status')
 let job = dockerStatus()
 
@@ -34,25 +34,58 @@ job.start()
 job.stop() // end the job
 ```
 
+```bash
+# Simple bash example
+docker-status
+
+# Defined docker address
+docker-status --host <host> --port <port>
+```
+
 
 ## Configuration
 
-Below is the form options specified to the package take
+Below is the form config objects passed to the module should take
 
 ```javascript
 {
-  [docker]: Object,     // dockerode options object
-  [cron]: Object,       // cron options object
-  [log]: {
-    file: String,       // file to save logs in
-    [colored]: Boolean  // colored output in file
-  }
+  docker: Object,     // dockerode options object
+  cron: Object,       // cron options object
+  file: String,       // file to save logs in
+  colored: Boolean    // colored output in file
+  existing: Boolean   // log out existing containers upon start up
 }
 ```
 
-For more information on the [dockerode](https://github.com/apocas/dockerode) or [cron job](https://github.com/ncb000gt/node-cron) options please visit their respective repos.
+All options are optional. For more information on the [dockerode](https://github.com/apocas/dockerode) or [cron](https://github.com/ncb000gt/node-cron) options please visit the respective [dockerode](https://github.com/apocas/dockerode) or [cron](https://github.com/ncb000gt/node-cron) repositories'.
 
-If you'd like to specify a file to log output, provide the name of the file, absolute or relative, at ```log.file```. If you'd like the file to have [colored](https://github.com/Marak/colors.js) like the console, set ```log.colored``` to ```true```.
+- To also store output in a file, set ```file``` to the path of that file, absolute or relative. Note this will append to, not overwrite, said file, creating it if needed.
+
+- To allow [colored](https://github.com/Marak/colors.js) output when outputting to file, set ```colored``` to ```true```.
+
+- To log existing containers upon startup, set ```existing``` to true.
+
+Here is a view of the cli tool options with description:
+
+```bash
+Usage: docker-status [options]
+
+Options:
+  -h           Show help                                               [boolean]
+  --protocol   docker protocol (http or https)
+  --host       docker host ip
+  --port       docker port
+  --ca         docker certificate authority (ca) file path
+  --cert       docker TLS certificate file path
+  --key        docker TLS key file path
+  --cronTime   the time to fire off your job. this can be in the form of cron
+               syntax. http://crontab.org/
+  --timeZone   specify the timezone for the execution
+  --runOnInit  immediately check the status of the docker containers
+  --existing   log the existing containers upon start up
+  --file       the path of the file to save output to
+  --colored    colored output in file, per ANSI escape codes
+```
 
 
 ## Examples
@@ -70,122 +103,115 @@ job.start()
 
 The above instance will log changes to the docker container space specified at \<host>:\<port> on weekdays from 8am to 8pm at 10 second intervals. The function specified at ```cron.onTick``` in the options object will be called with the list of current ```container``` data and list of ```updates```. The file, 'docker-status.log', will be appended with all logs, colored per ANSI escape codes.
 
-Here's a simple example of a cron job instantiated inside the nodejs repl.
+Here's a simple example of this package at work from the command line (without color, sadly).
 
-```javascript
-> var dockerStatus = require('docker-status')
-undefined
-> var job = dockerStatus()
-undefined
-> job.start()
-undefined
-> -- updates: Fri Oct 14 2016 17:49:06 GMT-0600 (MDT) --
+```
+$ node bin/docker-status.js --existing
+-- updates: Sun Oct 16 2016 17:57:34 GMT-0600 (MDT) --
 additions:
-  { Id: '01fd7133602ce163775572256992fb1abc8afb6a630fa016e5910c63ca76be50',
+  { Id: '54784f0d0ffa8c36010d90066d46517c377ed16f0e81e87ee4a2e25c21a0bc14',
     Names: [ '/mymongo' ],
     Image: 'mongo',
-    ImageID: 'sha256:1234567891234567891234567891234567891234567891234567891234567891',
+    ImageID: 'sha256:282fd552add6aa67509775e68e32aeabb2ea88726299367d49e36847c65833b4',
     Command: '/entrypoint.sh mongod',
-    Created: 1467825206,
-    Ports:
+    Created: 1466477477,
+    Ports: 
      [ { IP: '127.0.0.1',
          PrivatePort: 27017,
          PublicPort: 27017,
          Type: 'tcp' } ],
     Labels: {},
     State: 'running',
-    Status: 'Up 15 minutes',
+    Status: 'Up About an hour',
     HostConfig: { NetworkMode: 'default' },
-    NetworkSettings:
-     { Networks:
-        { bridge:
+    NetworkSettings: 
+     { Networks: 
+        { bridge: 
            { IPAMConfig: null,
              Links: null,
              Aliases: null,
-             NetworkID: '7c4ab17fc688ef1a85e2d59b62d3f5c2a75476280f9ca3e3cefb5750d6d20ab9',
-             EndpointID: 'ab549fe611a70bd841534a9c634cd2e3f9e9abf8218cf9204f04151e62e84b66',
-             Gateway: '172.17.0.1',
-             IPAddress: '172.17.0.2',
+             NetworkID: 'eb2d846e772d8492810890bdd93093b375079e8b52514590147353293566b353',
+             EndpointID: '263cdcb973267f92d40919d732d53383c9525821bec8c7f7c61a15e6003a2945',
+             Gateway: '123.45.0.1',
+             IPAddress: '123.45.0.2',
              IPPrefixLen: 16,
              IPv6Gateway: '',
              GlobalIPv6Address: '',
              GlobalIPv6PrefixLen: 0,
-             MacAddress: '02:42:ac:11:00:02' } } },
-    Mounts:
-     [ { Name: '40ec6ba4e6d29252acb5a79b5132283c0acc8a6215bfed62009a73093e2bed07',
-         Source: '/var/lib/docker/volumes/40ec6ba4e6d29252acb5a79b5132283c0acc8a6215bfed62009a73093e2bed07/_data',
+             MacAddress: '01:23:ab:45:67:89' } } },
+    Mounts: 
+     [ { Name: 'dd5e389f4e7d44526d549e743835e86f3272233b134a5d0a8cf022406b45467e',
+         Source: '/var/lib/docker/volumes/dd5e389f4e7d44526d549e743835e86f3272233b134a5d0a8cf022406b45467e/_data',
          Destination: '/data/configdb',
          Driver: 'local',
          Mode: '',
          RW: true,
          Propagation: '' },
-       { Name: '3e51e9fc3327417f1fe84dcbc911046754726dd3c2ff6035db1e1128198beb26',
-         Source: '/var/lib/docker/volumes/3e51e9fc3327417f1fe84dcbc911046754726dd3c2ff6035db1e1128198beb26/_data',
+       { Source: '/home/dude/db',
          Destination: '/data/db',
-         Driver: 'local',
          Mode: '',
          RW: true,
-         Propagation: '' } ] }
--- updates: Fri Oct 14 2016 17:49:20 GMT-0600 (MDT) --
+         Propagation: 'rprivate' } ] }
+-- updates: Sun Oct 16 2016 17:57:50 GMT-0600 (MDT) --
 additions:
-  { Id: 'e92feff15478270f98b824c93015342a75f4e64f315cdd69fe0c0f776c51e464',
-    Names: [ '/romantic_archimedes' ],
-    Image: 'hello-world',
-    ImageID: 'sha256:1234567891234567891234567891234567891234567891234567891234567891',
-    Command: '/hello',
-    Created: 1476488957,
-    Ports: [],
-    Labels: {},
-    State: 'running',
-    Status: 'Up Less than a second',
-    HostConfig: { NetworkMode: 'default' },
-    NetworkSettings:
-     { Networks:
-        { bridge:
-           { IPAMConfig: null,
-             Links: null,
-             Aliases: null,
-             NetworkID: '7c4ab17fc688ef1a85e2d59b62d3f5c2a75476280f9ca3e3cefb5750d6d20ab9',
-             EndpointID: '25fe13dee67670185b2fd5789b4d227393f3b9f3d43d9a7cd4c5b7b85240cd0d',
-             Gateway: '165.15.0.1',
-             IPAddress: '165.15.0.3',
-             IPPrefixLen: 16,
-             IPv6Gateway: '',
-             GlobalIPv6Address: '',
-             GlobalIPv6PrefixLen: 0,
-             MacAddress: '02:42:ac:11:00:03' } } },
-    Mounts: [] }
--- updates: Fri Oct 14 2016 17:49:21 GMT-0600 (MDT) --
-removals:
-  { Id: 'e92feff15478270f98b824c93015342a75f4e64f315cdd69fe0c0f776c51e464',
-    Names: [ '/romantic_archimedes' ],
+  { Id: '033299d3306a0d7472c454369e3e102c56d946393831cc3c130e77008862e277',
+    Names: [ '/hello' ],
     Image: 'hello-world',
     ImageID: 'sha256:c54a2cc56cbb2f04003c1cd4507e118af7c0d340fe7e2720f70976c4b75237dc',
     Command: '/hello',
-    Created: 1476488957,
+    Created: 1476662269,
     Ports: [],
     Labels: {},
     State: 'running',
     Status: 'Up Less than a second',
     HostConfig: { NetworkMode: 'default' },
-    NetworkSettings:
-     { Networks:
-        { bridge:
+    NetworkSettings: 
+     { Networks: 
+        { bridge: 
            { IPAMConfig: null,
              Links: null,
              Aliases: null,
-             NetworkID: '7c4ab17fc688ef1a85e2d59b62d3f5c2a75476280f9ca3e3cefb5750d6d20ab9',
-             EndpointID: '25fe13dee67670185b2fd5789b4d227393f3b9f3d43d9a7cd4c5b7b85240cd0d',
-             Gateway: '165.17.0.1',
-             IPAddress: '165.17.0.3',
+             NetworkID: 'eb2d846e772d8492810890bdd93093b375079e8b52514590147353293566b353',
+             EndpointID: 'c6f113e6074f40518bdbfaea92e82e6a9aef6b977a602ecbe2f174763f301810',
+             Gateway: '123.45.0.1',
+             IPAddress: '123.45.0.3',
              IPPrefixLen: 16,
              IPv6Gateway: '',
              GlobalIPv6Address: '',
              GlobalIPv6PrefixLen: 0,
-             MacAddress: '02:42:ac:11:00:03' } } },
+             MacAddress: '01:23:ab:45:67:89' } } },
     Mounts: [] }
--- updates: Fri Oct 14 2016 18:24:27 GMT-0600 (MDT) --
-diffs to 8145e9a12cfcca3afcd00bd05587635f3668c553f73d9f1b59e120d09d11497e
+-- updates: Sun Oct 16 2016 17:57:50 GMT-0600 (MDT) --
+diffs to 033299d3306a0d7472c454369e3e102c56d946393831cc3c130e77008862e277
   State: running -> exited
-  Status: Up Less than a second -> Exited (0) 1 seconds ago
+  Status: Up Less than a second -> Exited (0) Less than a second ago
+-- updates: Sun Oct 16 2016 17:57:58 GMT-0600 (MDT) --
+removals:
+  { Id: '033299d3306a0d7472c454369e3e102c56d946393831cc3c130e77008862e277',
+    Names: [ '/hello' ],
+    Image: 'hello-world',
+    ImageID: 'sha256:c54a2cc56cbb2f04003c1cd4507e118af7c0d340fe7e2720f70976c4b75237dc',
+    Command: '/hello',
+    Created: 1476662269,
+    Ports: [],
+    Labels: {},
+    State: 'exited',
+    Status: 'Exited (0) 7 seconds ago',
+    HostConfig: { NetworkMode: 'default' },
+    NetworkSettings: 
+     { Networks: 
+        { bridge: 
+           { IPAMConfig: null,
+             Links: null,
+             Aliases: null,
+             NetworkID: 'eb2d846e772d8492810890bdd93093b375079e8b52514590147353293566b353',
+             EndpointID: '',
+             Gateway: '',
+             IPAddress: '',
+             IPPrefixLen: 0,
+             IPv6Gateway: '',
+             GlobalIPv6Address: '',
+             GlobalIPv6PrefixLen: 0,
+             MacAddress: '' } } },
+    Mounts: [] }
 ```
