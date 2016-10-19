@@ -37,10 +37,22 @@ module.exports = function (options) {
   let docker = new Docker(options.docker)
   let prevContainers = []
   let firstCheck = true
+  let prevCallTimedOut = false
 
   function handleContainerUpdates (err, currContainers) {
     if (err) {
-      throw err
+      console.log(err)
+      if ((err.message && err.message.code === 'ETIMEDOUT') || err.code === 'ETIMEDOUT') {
+        if (!prevCallTimedOut) {
+          prevCallTimedOut = true
+          docker = new Docker(options.docker)
+          return
+        } else {
+          throw err
+        }
+      } else {
+        throw err
+      }
     }
     if (!currContainers) {  // TODO: removed this if we find that currContainers is only null when there is an error
       currContainers = []
