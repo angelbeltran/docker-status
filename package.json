@@ -1,6 +1,6 @@
 {
   "name": "docker-status",
-  "version": "0.2.5-readme-2",
+  "version": "0.2.6",
   "description": "A tool that generates cron jobs for logging updates to containers running in a docker instance.",
   "main": "index.js",
   "scripts": {
