@@ -1,8 +1,6 @@
 # Docker-Status
 
-A tool for logging docker container information.
-
-## Install
+## Installation
 
 ```
 npm install -g docker-status
